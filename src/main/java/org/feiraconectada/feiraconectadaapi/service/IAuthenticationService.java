@@ -4,7 +4,7 @@ import org.feiraconectada.feiraconectadaapi.dto.request.UserLogin;
 import org.feiraconectada.feiraconectadaapi.dto.request.UserRegister;
 import org.springframework.http.ResponseEntity;
 
-public interface IUserService {
+public interface IAuthenticationService {
 
     ResponseEntity save(UserRegister user);
 

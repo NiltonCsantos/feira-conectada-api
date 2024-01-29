@@ -10,9 +10,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+
 
 @Service
-public class AuthenticateService implements  IUserService {
+public class AuthenticateService implements IAuthenticationService {
 
 
    private final UserRepository userRepository;
@@ -21,15 +23,25 @@ public class AuthenticateService implements  IUserService {
 
    private final TokenService tokenService;
 
+   private final AuthorizationService authorizationService;
+
+   private final MailService emailService;
+
+
+
 
     public AuthenticateService(UserRepository userRepository, AuthenticationManager authenticationManager,
-                               TokenService tokenService) {
+                               TokenService tokenService, AuthorizationService authorizationService,
+                               MailService emailService) {
 
         this.userRepository = userRepository;
-        this.authenticationManager=authenticationManager;
-        this.tokenService=tokenService;
-    }
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+        this.authorizationService = authorizationService;
+        this.emailService = emailService;
 
+
+    }
 
     @Override
     public ResponseEntity save(UserRegister user) {
@@ -45,6 +57,12 @@ public class AuthenticateService implements  IUserService {
 
         userRepository.save(newUser);
 
+
+
+
+
+        emailService.sendMail(user.email(), user.fullName());
+
         return  ResponseEntity.ok().body(user);
 
 
@@ -53,16 +71,19 @@ public class AuthenticateService implements  IUserService {
     @Override
     public ResponseEntity connnect(UserLogin user) {
 
-        if (this.userRepository.findByEmail(user.email())==null){
+        if (authorizationService.loadUserByUsername(user.email())==null){
             return ResponseEntity.badRequest().body("Usuário não encontrado");
         }else{
-            UsernamePasswordAuthenticationToken passwordAuthenticationToken = new UsernamePasswordAuthenticationToken(user.email(), user.password());
-            var auth=this.authenticationManager.authenticate(passwordAuthenticationToken);
-            System.out.println("Token gerado: ");
-            System.out.println(tokenService.generateToken(user));
-            System.out.println("Teste validação:");
 
-            return ResponseEntity.ok().body(user);
+            UsernamePasswordAuthenticationToken passwordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                    user.email(), user.password());
+
+            var auth=this.authenticationManager.authenticate(passwordAuthenticationToken);
+
+            String token= this.tokenService.generateToken((UserModel) auth.getPrincipal());
+
+            return ResponseEntity.ok().body(token);
+
         }
     }
 }

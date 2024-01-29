@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.feiraconectada.feiraconectadaapi.repository.UserRepository;
+import org.feiraconectada.feiraconectadaapi.service.AuthorizationService;
 import org.feiraconectada.feiraconectadaapi.service.TokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,12 +20,12 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
 
-    private final  UserRepository userRepository;
-    public SecurityFilter(TokenService tokenService, UserRepository userRepository) {
+    private final AuthorizationService authorizationService;
+    public SecurityFilter(TokenService tokenService, AuthorizationService authorizationService) {
 
         this.tokenService=tokenService;
 
-        this.userRepository=userRepository;
+        this.authorizationService=authorizationService;
     }
 
     @Override
@@ -36,12 +37,11 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             String email= tokenService.validateToken(token);
 
-            UserDetails user= userRepository.findByEmail(email);
+            UserDetails user= authorizationService.loadUserByUsername(email);
 
-            var auth= new UsernamePasswordAuthenticationToken(user, null);
+            var auth= new UsernamePasswordAuthenticationToken(user, email, user.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-
 
 
         }
@@ -56,10 +56,6 @@ public class SecurityFilter extends OncePerRequestFilter {
         return authHeader==null
                 ? null
                 :authHeader.replace("Bearer", "");
-
-
-
-
 
     }
 }
