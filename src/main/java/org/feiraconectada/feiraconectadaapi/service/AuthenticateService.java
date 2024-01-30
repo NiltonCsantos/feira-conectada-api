@@ -6,6 +6,7 @@ import org.feiraconectada.feiraconectadaapi.dto.request.UserRegister;
 import org.feiraconectada.feiraconectadaapi.model.UserModel;
 import org.feiraconectada.feiraconectadaapi.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +15,7 @@ import org.thymeleaf.context.Context;
 
 
 @Service
+@EnableAsync
 public class AuthenticateService implements IAuthenticationService {
 
 
@@ -46,24 +48,33 @@ public class AuthenticateService implements IAuthenticationService {
     @Override
     public ResponseEntity save(UserRegister user) {
 
-        if (this.userRepository.findByEmail(user.email())!=null){
-            return ResponseEntity.badRequest().build();
+        try {
+
+            if (this.userRepository.findByEmail(user.email())!=null){
+                throw new Exception("Usuário já cadastrado");
+            }
+
+            String encryptedPassword= new BCryptPasswordEncoder().encode(user.password());
+
+
+            UserModel newUser= new UserModel(user, encryptedPassword);
+
+//            System.out.println(2/0);
+
+            userRepository.save(newUser);
+
+            System.out.println("Enviando email");
+
+
+
+            emailService.sendMail(user.email(), user.fullName());
+
+            return  ResponseEntity.ok().body(user);
+
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+
         }
-
-        String encryptedPassword= new BCryptPasswordEncoder().encode(user.password());
-
-
-        UserModel newUser= new UserModel(user, encryptedPassword);
-
-        userRepository.save(newUser);
-
-
-
-
-
-        emailService.sendMail(user.email(), user.fullName());
-
-        return  ResponseEntity.ok().body(user);
 
 
     }

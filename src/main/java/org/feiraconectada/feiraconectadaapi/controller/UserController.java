@@ -1,11 +1,10 @@
 package org.feiraconectada.feiraconectadaapi.controller;
 
 
+import org.feiraconectada.feiraconectadaapi.dto.request.UserFind;
 import org.feiraconectada.feiraconectadaapi.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("users")
@@ -17,9 +16,11 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/findall")
-    public ResponseEntity findAllUsers(){
-        return userService.findUsers();
+    @PostMapping("/find")
+    private ResponseEntity findAllUsers(@RequestBody UserFind userFind){
+        System.out.println("email");
+        System.out.println(userFind.email());
+        return userService.findUser(userFind.email());
     }
 
 }

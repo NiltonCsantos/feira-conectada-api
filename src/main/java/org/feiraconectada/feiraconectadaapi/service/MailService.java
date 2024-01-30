@@ -10,6 +10,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -31,6 +32,8 @@ public class MailService {
         this.mailSender=mailSender;
         this.templateEngine= templateEngine;
     }
+
+    @Async
 
     public void sendMail(String email, String fullName){
 
@@ -67,6 +70,7 @@ public class MailService {
            mailSender.send(mimeMessage);
 
 
+           System.out.println("Email enviado");
 
 
        }catch (MailException e){
