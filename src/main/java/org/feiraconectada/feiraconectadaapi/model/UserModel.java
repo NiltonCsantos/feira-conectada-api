@@ -1,48 +1,58 @@
 package org.feiraconectada.feiraconectadaapi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.feiraconectada.feiraconectadaapi.dto.request.UserRegister;
 import org.feiraconectada.feiraconectadaapi.enuns.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.management.relation.Role;
 import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
 @EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "users")
-public class UserModel implements UserDetails {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class UserModel implements CustomUserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer id;
+    protected Integer id;
 
-    @NotNull
-    String fullName;
+    protected String fullName;
 
+    @Getter
     @Column(unique = true)
-    String email;
+    protected String email;
 
-    String password;
+    protected String password;
 
-    UserRole role;
+    protected UserRole role;
+
+
+    //olhar
+    @OneToMany(mappedBy = "idUserFk", fetch = FetchType.LAZY, cascade= CascadeType.REMOVE)
+    protected List<UserAddresModel> userAddresList;
+
 
 
     public UserModel(UserRegister userRegister, String password) {
         this.fullName = userRegister.fullName();
         this.email = userRegister.email();
         this.password = password;
-        this.role= userRegister.role();
+        this.role= UserRole.USER;
+    }
+
+    public UserModel(String fullName, String email, String password, UserRole role) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
     @Override
@@ -76,4 +86,6 @@ public class UserModel implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

@@ -39,10 +39,10 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             UserDetails user= authorizationService.loadUserByUsername(email);
 
+
             var auth= new UsernamePasswordAuthenticationToken(user, email, user.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-
 
         }
 

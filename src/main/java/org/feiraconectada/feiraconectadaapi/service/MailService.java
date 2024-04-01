@@ -2,13 +2,10 @@ package org.feiraconectada.feiraconectadaapi.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.aspectj.apache.bcel.util.ClassPath;
+import org.feiraconectada.feiraconectadaapi.exceptions.MessageMailException;
+import org.feiraconectada.feiraconectadaapi.exceptions.SendMailException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -73,10 +70,10 @@ public class MailService {
            System.out.println("Email enviado");
 
 
-       }catch (MailException e){
-           System.out.println(e);
-       } catch (MessagingException e) {
-           throw new RuntimeException(e);
+       }catch (SendMailException e){
+           throw new SendMailException();
+       } catch (MessagingException e){
+           System.out.println(new MessageMailException().getMessage());
        }
     }
 }

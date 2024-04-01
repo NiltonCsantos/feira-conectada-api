@@ -15,7 +15,6 @@ public class WelcommeController {
     @GetMapping()
     public String wellcomme(){
 
-       model.addAttribute("Title", "HelloWord");
 
        return "Olá";
     }
