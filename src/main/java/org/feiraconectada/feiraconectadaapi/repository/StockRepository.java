@@ -20,4 +20,6 @@ public interface StockRepository extends JpaRepository<StockModel, Integer> {
 
     List<StockModel> findByNiche(NicheRole role);
 
+    List<StockModel> findByIdSellerFk(SellerModel sellerModel);
+
 }

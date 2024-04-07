@@ -16,9 +16,14 @@ public record UserAdmin(
         @NotBlank(message = "O campo senha deve ser preenchido")
         String password,
 
+        @NotBlank
         String storeNumber,
 
-        NicheRole niche
+        @Enumerated
+        NicheRole niche,
+
+        @NotBlank
+        String image
 
 
 )  {

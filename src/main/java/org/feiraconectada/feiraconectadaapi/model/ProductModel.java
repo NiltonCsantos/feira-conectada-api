@@ -23,6 +23,9 @@ public class ProductModel {
 
     protected Long quantity;
 
+    @Column(columnDefinition = "TEXT")
+    protected String image;
+
     @ManyToOne
     @JoinColumn(name = "stock_id", nullable = false)
     protected StockModel idStockFkModel;
@@ -31,5 +34,6 @@ public class ProductModel {
         this.name = productRequest.name();
         this.price = productRequest.price();
         this.quantity=productRequest.quantity();
+        this.image=productRequest.image();
     }
 }

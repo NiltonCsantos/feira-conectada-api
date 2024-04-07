@@ -26,6 +26,9 @@ public class SellerModel extends UserModel {
 
     protected NicheRole niche;
 
+    @Column(columnDefinition = "TEXT")
+    protected String image;
+
     @OneToMany(mappedBy = "idSellerFk", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     protected List<StockModel> stockModelList;
 
@@ -37,6 +40,8 @@ public class SellerModel extends UserModel {
        this.niche=admin.niche();
 
        this.storeNumber=admin.storeNumber();
+
+       this.image=admin.image();
 
 
    }

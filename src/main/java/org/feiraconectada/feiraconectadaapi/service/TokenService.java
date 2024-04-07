@@ -35,7 +35,7 @@ public class TokenService {
                     .setIssuer("auth-feira-app")
                     .setSubject(userModel.getEmail())
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis()+360000000))
+                    .setExpiration(new Date(System.currentTimeMillis()+3000*1000))
                     .signWith(getSignKey(), SignatureAlgorithm.HS512).
                     compact();
 
@@ -58,7 +58,7 @@ public class TokenService {
                     .setIssuer("auth-feira-app")
                     .setSubject(user.getEmail())
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis()+3600000))
+                    .setExpiration(new Date(System.currentTimeMillis()+36000000))
                     .signWith(getSignKey(), SignatureAlgorithm.HS512).
                     compact();
 

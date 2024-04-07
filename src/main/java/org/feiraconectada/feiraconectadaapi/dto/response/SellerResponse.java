@@ -16,18 +16,20 @@ public record SellerResponse(
 
         String StoreNumber,
 
-        NicheRole niche
+        NicheRole niche,
+
+        String image
 ) {
 
     public SellerResponse (StockModel stockModel){
         this(stockModel.getIdSellerFk().getId(),
                 stockModel.getIdSellerFk().getFullName(),
                 stockModel.getIdSellerFk().getStoreNumber(),
-                stockModel.getIdSellerFk().getNiche());
+                stockModel.getIdSellerFk().getNiche(), stockModel.getIdSellerFk().getImage());
     }
     public SellerResponse (SellerModel sellerModel){
         this(sellerModel.getId(), sellerModel.getFullName(),
-                sellerModel.getStoreNumber(), sellerModel.getNiche());
+                sellerModel.getStoreNumber(), sellerModel.getNiche(), sellerModel.getImage());
     }
 
 }

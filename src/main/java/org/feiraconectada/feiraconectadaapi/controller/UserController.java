@@ -6,7 +6,6 @@ import org.feiraconectada.feiraconectadaapi.dto.request.UserAddresRequest;
 import org.feiraconectada.feiraconectadaapi.dto.request.IDRequest;
 import org.feiraconectada.feiraconectadaapi.dto.response.AddresResponse;
 import org.feiraconectada.feiraconectadaapi.dto.response.SellerResponse;
-import org.feiraconectada.feiraconectadaapi.dto.response.StockResponse;
 import org.feiraconectada.feiraconectadaapi.service.SellerService;
 import org.feiraconectada.feiraconectadaapi.service.UserService;
 import org.springframework.http.ResponseEntity;

@@ -18,7 +18,10 @@ public record ProductRequest(
         Long quantity,
 
         @NotNull
-        Integer idStock
+        Integer idStock,
+
+        @NotBlank
+        String image
 
 
 ) {

@@ -1,8 +1,8 @@
 package org.feiraconectada.feiraconectadaapi.service;
 
-import jakarta.validation.Valid;
-import lombok.Getter;
 import org.feiraconectada.feiraconectadaapi.dto.request.StockRequest;
+import org.feiraconectada.feiraconectadaapi.dto.response.ProductResponse;
+import org.feiraconectada.feiraconectadaapi.dto.response.StockProductResponse;
 import org.feiraconectada.feiraconectadaapi.dto.response.StockResponse;
 import org.feiraconectada.feiraconectadaapi.dto.response.UserResponse;
 import org.feiraconectada.feiraconectadaapi.enuns.NicheRole;
@@ -12,9 +12,7 @@ import org.feiraconectada.feiraconectadaapi.model.*;
 import org.feiraconectada.feiraconectadaapi.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -99,20 +97,49 @@ public class StockService {
         return userResponse;
     }
 
-    public List<StockResponse> gelAllStockToNiche(NicheRole role){
+    public List<StockProductResponse> gelAllStockToNiche(NicheRole role){
 
 
         return stockRepository.
                 findByNiche(role).
                 stream().
                 map(stockModel -> {
-                    StockResponse stockResponse= new StockResponse(stockModel);
-                            return stockResponse;
+                    StockProductResponse stockProductResponse = new StockProductResponse(stockModel);
+                            return stockProductResponse;
                         }
                 ).collect(Collectors.toList());
 
 
 
+
+    }
+
+    public List<StockResponse> findStockForSeller(Integer idSeller){
+
+        Optional<SellerModel> sellerModelOptional= this.sellerService.findSeller(idSeller);
+
+        if (sellerModelOptional.isEmpty()){
+            throw  new NotFoundException("Usuário não encontrado");
+        }
+
+
+
+        return  this.stockRepository.findByIdSellerFk(sellerModelOptional.get())
+                .stream().map(StockResponse::new)
+                .collect(Collectors.toList());
+
+
+    }
+
+    public  List<ProductResponse> findProductsForStock(int id) throws NotFoundException{
+
+        Optional<StockModel> optionalStockModel= stockRepository.findById(id);
+
+        if (optionalStockModel.isEmpty()){
+            throw  new NotFoundException("Stock Não encontrado");
+        }
+
+        return optionalStockModel.get().getProducts().stream().map(ProductResponse::new).collect(Collectors.toList());
 
     }
 

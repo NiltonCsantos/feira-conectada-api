@@ -4,9 +4,10 @@ import jakarta.validation.Valid;
 import org.feiraconectada.feiraconectadaapi.dto.request.NicheRequest;
 import org.feiraconectada.feiraconectadaapi.dto.request.StockRequest;
 import org.feiraconectada.feiraconectadaapi.dto.request.IDRequest;
+import org.feiraconectada.feiraconectadaapi.dto.response.ProductResponse;
+import org.feiraconectada.feiraconectadaapi.dto.response.StockProductResponse;
 import org.feiraconectada.feiraconectadaapi.dto.response.StockResponse;
 import org.feiraconectada.feiraconectadaapi.dto.response.UserResponse;
-import org.feiraconectada.feiraconectadaapi.enuns.NicheRole;
 import org.feiraconectada.feiraconectadaapi.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class StockController {
     }
 
     @PostMapping("/niche")
-    public ResponseEntity<List<StockResponse>> getStockNiche(@RequestBody NicheRequest role){
+    public ResponseEntity<List<StockProductResponse>> getStockNiche(@RequestBody NicheRequest role){
 
         System.out.println("Nicho");
         System.out.println(role.niche());
@@ -57,6 +58,24 @@ public class StockController {
         return  ResponseEntity.ok(stockService.gelAllStockToNiche(role.niche()));
 
 
+    }
+
+
+    @PostMapping("/find/niche")
+    public ResponseEntity<List<StockResponse>> getNicheStock(@RequestBody IDRequest idRequest){
+
+        System.out.println("Nicho");
+        System.out.println(idRequest.id());
+
+
+        return  ResponseEntity.ok(stockService.findStockForSeller(idRequest.id()));
+
+
+    }
+
+    @PostMapping()
+    public ResponseEntity<List<ProductResponse>> findStock(@RequestBody @Valid IDRequest idRequest){
+        return ResponseEntity.ok(stockService.findProductsForStock(idRequest.id()));
     }
 
 }

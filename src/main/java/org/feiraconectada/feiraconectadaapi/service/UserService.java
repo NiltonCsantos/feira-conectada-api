@@ -2,7 +2,6 @@ package org.feiraconectada.feiraconectadaapi.service;
 
 import org.feiraconectada.feiraconectadaapi.dto.request.UserAddresRequest;
 import org.feiraconectada.feiraconectadaapi.dto.response.AddresResponse;
-import org.feiraconectada.feiraconectadaapi.dto.response.StockResponse;
 import org.feiraconectada.feiraconectadaapi.exceptions.NotFoundException;
 import org.feiraconectada.feiraconectadaapi.exceptions.RegistredUserAddressException;
 import org.feiraconectada.feiraconectadaapi.model.*;

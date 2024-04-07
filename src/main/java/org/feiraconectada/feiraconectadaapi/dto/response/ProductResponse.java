@@ -13,13 +13,15 @@ public record ProductResponse (
 
          Long quantity,
 
-         SellerResponse seller
+         SellerResponse seller,
+
+         String image
 
 ) {
 
     public ProductResponse (ProductModel productModel){
         this(
                 productModel.getId(), productModel.getName(),productModel.getPrice(),
-                productModel.getQuantity(), new SellerResponse(productModel.getIdStockFkModel()));
+                productModel.getQuantity(), new SellerResponse(productModel.getIdStockFkModel()), productModel.getImage());
     }
 }
