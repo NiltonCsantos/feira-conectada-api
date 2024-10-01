@@ -31,6 +31,14 @@ build/
 
 src/main/resources/application.properties
 
+src/main/resources/feira-d56fc-firebase-adminsdk-3329q-1f77efc56c.json
+
+.env
+*.log
+.DS_Store  # Para sistemas macOS
+Thumbs.db  # Para sistemas Windows
+
+
 ### VS Code ###
 .vscode/
 

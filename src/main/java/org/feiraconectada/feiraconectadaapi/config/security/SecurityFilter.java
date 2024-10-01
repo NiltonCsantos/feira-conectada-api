@@ -4,12 +4,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.feiraconectada.feiraconectadaapi.repository.UserRepository;
-import org.feiraconectada.feiraconectadaapi.service.AuthorizationService;
-import org.feiraconectada.feiraconectadaapi.service.TokenService;
+import org.feiraconectada.feiraconectadaapi.service.autenticacao.authenticate.UserDetailsServiceImpl;
+import org.feiraconectada.feiraconectadaapi.service.autenticacao.token.TokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,12 +20,12 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
 
-    private final AuthorizationService authorizationService;
-    public SecurityFilter(TokenService tokenService, AuthorizationService authorizationService) {
+    private final UserDetailsService userDetailsServiceImpl;
+    public SecurityFilter(TokenService tokenService, UserDetailsServiceImpl userDetailsServiceImpl) {
 
         this.tokenService=tokenService;
 
-        this.authorizationService=authorizationService;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
     @Override
@@ -35,10 +35,9 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (token != null){
 
-            String email= tokenService.validateToken(token);
+            String email= tokenService.validarToken(token);
 
-            UserDetails user= authorizationService.loadUserByUsername(email);
-
+            UserDetails user= userDetailsServiceImpl.loadUserByUsername(email);
 
             var auth= new UsernamePasswordAuthenticationToken(user, email, user.getAuthorities());
 

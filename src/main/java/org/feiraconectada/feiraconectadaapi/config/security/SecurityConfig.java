@@ -29,15 +29,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable() )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(autorize -> autorize
-                        .requestMatchers(HttpMethod.POST, "auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "auth/register/admin").permitAll()
-                        .requestMatchers(HttpMethod.POST, "auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "auth/login/refrash").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/stock/cadastre").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/product/cadastre").hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.POST, "/users/find/stock").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "v1/estoques").hasRole("VENDEDOR")
+                        .requestMatchers(HttpMethod.POST, "/product/cadastre").hasRole("VENDEDOR")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

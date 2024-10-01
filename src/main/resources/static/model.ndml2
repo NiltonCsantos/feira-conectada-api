@@ -258,78 +258,6 @@
           },
           {
             "objectType": "Table_LOGICAL",
-            "name": "Seller",
-            "comment": "",
-            "oldName": "",
-            "fields": [
-              {
-                "objectType": "TableField_LOGICAL",
-                "name": "id",
-                "type": "INTEGER",
-                "length": 0,
-                "decimals": 0,
-                "isNullable": false,
-                "defaultType": "None",
-                "defaultValue": "",
-                "comment": "",
-                "oldName": "id"
-              },
-              {
-                "objectType": "TableField_LOGICAL",
-                "name": "store_number",
-                "type": "INTEGER",
-                "length": 0,
-                "decimals": 0,
-                "isNullable": true,
-                "defaultType": "None",
-                "defaultValue": "",
-                "comment": "",
-                "oldName": "store_number"
-              },
-              {
-                "objectType": "TableField_LOGICAL",
-                "name": "niche",
-                "type": "CHAR VARYING",
-                "length": 255,
-                "decimals": 0,
-                "isNullable": true,
-                "defaultType": "None",
-                "defaultValue": "",
-                "comment": "",
-                "oldName": "niche"
-              }
-            ],
-            "foreignKeys": [
-              {
-                "objectType": "ForeignKey_LOGICAL",
-                "name": "fk_Seller_stock_1",
-                "fields": [
-                  "id"
-                ],
-                "referencedSchema": "default",
-                "referencedTable": "stock",
-                "referencedFields": [
-                  "id_seller_fk"
-                ],
-                "sourceCardinality": "OneAndOnlyOneRelationship",
-                "targetCardinality": "ZeroOrManyRelationship",
-                "comment": "",
-                "oldName": ""
-              }
-            ],
-            "indexes": [],
-            "uniques": [],
-            "primaryKey": {
-              "objectType": "PrimaryKey_LOGICAL",
-              "name": "",
-              "fields": [
-                "id"
-              ],
-              "oldName": ""
-            }
-          },
-          {
-            "objectType": "Table_LOGICAL",
             "name": "stock",
             "comment": "",
             "oldName": "",
@@ -487,7 +415,7 @@
                   "id"
                 ],
                 "referencedSchema": "default",
-                "referencedTable": "address_users",
+                "referencedTable": "",
                 "referencedFields": [
                   "id_address"
                 ],
@@ -578,12 +506,12 @@
             "foreignKeys": [
               {
                 "objectType": "ForeignKey_LOGICAL",
-                "name": "fk_users_address Copy 1_1",
+                "name": "fk_users_orders_1",
                 "fields": [
                   "id"
                 ],
                 "referencedSchema": "default",
-                "referencedTable": "address_users",
+                "referencedTable": "orders",
                 "referencedFields": [
                   "id_user"
                 ],
@@ -594,12 +522,12 @@
               },
               {
                 "objectType": "ForeignKey_LOGICAL",
-                "name": "fk_users_orders_1",
+                "name": "fk_users_address Copy 1_1",
                 "fields": [
                   "id"
                 ],
                 "referencedSchema": "default",
-                "referencedTable": "orders",
+                "referencedTable": "",
                 "referencedFields": [
                   "id_user"
                 ],
@@ -632,7 +560,7 @@
           },
           {
             "objectType": "Table_LOGICAL",
-            "name": "address_users",
+            "name": "",
             "comment": "",
             "oldName": "",
             "fields": [
@@ -684,6 +612,106 @@
               ],
               "oldName": ""
             }
+          },
+          {
+            "objectType": "Table_LOGICAL",
+            "name": "Seller",
+            "comment": "",
+            "oldName": "",
+            "fields": [
+              {
+                "objectType": "TableField_LOGICAL",
+                "name": "id",
+                "type": "INTEGER",
+                "length": 0,
+                "decimals": 0,
+                "isNullable": false,
+                "defaultType": "None",
+                "defaultValue": "",
+                "comment": "",
+                "oldName": "id"
+              },
+              {
+                "objectType": "TableField_LOGICAL",
+                "name": "store_number",
+                "type": "INTEGER",
+                "length": 0,
+                "decimals": 0,
+                "isNullable": true,
+                "defaultType": "None",
+                "defaultValue": "",
+                "comment": "",
+                "oldName": "store_number"
+              },
+              {
+                "objectType": "TableField_LOGICAL",
+                "name": "niche",
+                "type": "CHAR VARYING",
+                "length": 255,
+                "decimals": 0,
+                "isNullable": true,
+                "defaultType": "None",
+                "defaultValue": "",
+                "comment": "",
+                "oldName": "niche"
+              },
+              {
+                "objectType": "TableField_LOGICAL",
+                "name": "idCityFk",
+                "type": "INT",
+                "length": 255,
+                "decimals": 0,
+                "isNullable": true,
+                "defaultType": "None",
+                "defaultValue": "",
+                "comment": "",
+                "oldName": "idCityFk"
+              }
+            ],
+            "foreignKeys": [
+              {
+                "objectType": "ForeignKey_LOGICAL",
+                "name": "fk_Seller_stock_1",
+                "fields": [
+                  "id"
+                ],
+                "referencedSchema": "default",
+                "referencedTable": "stock",
+                "referencedFields": [
+                  "id_seller_fk"
+                ],
+                "sourceCardinality": "OneAndOnlyOneRelationship",
+                "targetCardinality": "ZeroOrManyRelationship",
+                "comment": "",
+                "oldName": ""
+              },
+              {
+                "objectType": "ForeignKey_LOGICAL",
+                "name": "fk_Seller_address_1",
+                "fields": [
+                  "idCityFk"
+                ],
+                "referencedSchema": "default",
+                "referencedTable": "address",
+                "referencedFields": [
+                  "id"
+                ],
+                "sourceCardinality": "OneOrManyRelationship",
+                "targetCardinality": "OneAndOnlyOneRelationship",
+                "comment": "",
+                "oldName": ""
+              }
+            ],
+            "indexes": [],
+            "uniques": [],
+            "primaryKey": {
+              "objectType": "PrimaryKey_LOGICAL",
+              "name": "",
+              "fields": [
+                "id"
+              ],
+              "oldName": ""
+            }
           }
         ]
       }
@@ -708,7 +736,7 @@
           "schemaName": "default",
           "tableName": "users",
           "x": 90,
-          "y": 241,
+          "y": 0,
           "width": 210,
           "height": 190,
           "isBold": false,
@@ -723,8 +751,8 @@
           "type": "table",
           "schemaName": "default",
           "tableName": "address",
-          "x": 100,
-          "y": 670,
+          "x": 120,
+          "y": 510,
           "width": 200,
           "height": 200,
           "isBold": false,
@@ -755,7 +783,7 @@
           "type": "table",
           "schemaName": "default",
           "tableName": "payment",
-          "x": 400,
+          "x": 690,
           "y": 520,
           "width": 200,
           "height": 200,
@@ -804,23 +832,7 @@
           "schemaName": "default",
           "tableName": "Seller",
           "x": 90,
-          "y": 10,
-          "width": 200,
-          "height": 200,
-          "isBold": false,
-          "titleColor": {
-            "r": 55,
-            "g": 131,
-            "b": 192,
-            "a": 1
-          }
-        },
-        {
-          "type": "table",
-          "schemaName": "default",
-          "tableName": "address_users",
-          "x": 90,
-          "y": 450,
+          "y": 220,
           "width": 200,
           "height": 200,
           "isBold": false,
@@ -934,7 +946,7 @@
           "visible": true,
           "vertices": [
             {
-              "x": 615,
+              "x": 905,
               "y": 560
             },
             {
@@ -951,7 +963,7 @@
             }
           ],
           "label": {
-            "x": 611,
+            "x": 901,
             "y": 532,
             "width": 147,
             "height": 30,
@@ -977,11 +989,11 @@
           "vertices": [
             {
               "x": 305,
-              "y": 50
+              "y": 260
             },
             {
               "x": 510,
-              "y": 50
+              "y": 260
             },
             {
               "x": 510,
@@ -994,92 +1006,8 @@
           ],
           "label": {
             "x": 295,
-            "y": 12,
+            "y": 222,
             "width": 117,
-            "height": 30,
-            "fontName": "Arial Unicode MS",
-            "fontSize": 14,
-            "fontColor": {
-              "r": 51,
-              "g": 51,
-              "b": 51,
-              "a": 1
-            },
-            "isFontBold": false,
-            "isFontItalic": false,
-            "isVisible": false
-          }
-        },
-        {
-          "name": "fk_users_address Copy 1_1",
-          "sourceTableName": "users",
-          "sourceSchemaName": "default",
-          "lineWidth": 1,
-          "visible": true,
-          "vertices": [
-            {
-              "x": 75,
-              "y": 290
-            },
-            {
-              "x": 69,
-              "y": 290
-            },
-            {
-              "x": 70,
-              "y": 490
-            },
-            {
-              "x": 75,
-              "y": 490
-            }
-          ],
-          "label": {
-            "x": 91,
-            "y": 292,
-            "width": 181,
-            "height": 30,
-            "fontName": "Arial Unicode MS",
-            "fontSize": 14,
-            "fontColor": {
-              "r": 51,
-              "g": 51,
-              "b": 51,
-              "a": 1
-            },
-            "isFontBold": false,
-            "isFontItalic": false,
-            "isVisible": false
-          }
-        },
-        {
-          "name": "fk_address_address_users_1",
-          "sourceTableName": "address",
-          "sourceSchemaName": "default",
-          "lineWidth": 1,
-          "visible": true,
-          "vertices": [
-            {
-              "x": 85,
-              "y": 720
-            },
-            {
-              "x": 60,
-              "y": 720
-            },
-            {
-              "x": 60,
-              "y": 540
-            },
-            {
-              "x": 75,
-              "y": 540
-            }
-          ],
-          "label": {
-            "x": 101,
-            "y": 692,
-            "width": 188,
             "height": 30,
             "fontName": "Arial Unicode MS",
             "fontSize": 14,
@@ -1103,11 +1031,11 @@
           "vertices": [
             {
               "x": 315,
-              "y": 340
+              "y": 100
             },
             {
               "x": 345,
-              "y": 340
+              "y": 100
             },
             {
               "x": 345,
@@ -1120,8 +1048,50 @@
           ],
           "label": {
             "x": 305,
-            "y": 302,
+            "y": 62,
             "width": 122,
+            "height": 30,
+            "fontName": "Arial Unicode MS",
+            "fontSize": 14,
+            "fontColor": {
+              "r": 51,
+              "g": 51,
+              "b": 51,
+              "a": 1
+            },
+            "isFontBold": false,
+            "isFontItalic": false,
+            "isVisible": false
+          }
+        },
+        {
+          "name": "fk_Seller_address_1",
+          "sourceTableName": "Seller",
+          "sourceSchemaName": "default",
+          "lineWidth": 1,
+          "visible": true,
+          "vertices": [
+            {
+              "x": 75,
+              "y": 330
+            },
+            {
+              "x": 60,
+              "y": 330
+            },
+            {
+              "x": 60,
+              "y": 550
+            },
+            {
+              "x": 105,
+              "y": 550
+            }
+          ],
+          "label": {
+            "x": 91,
+            "y": 332,
+            "width": 134,
             "height": 30,
             "fontName": "Arial Unicode MS",
             "fontSize": 14,
