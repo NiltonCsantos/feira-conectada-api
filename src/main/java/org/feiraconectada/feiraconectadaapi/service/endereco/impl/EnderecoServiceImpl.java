@@ -1,9 +1,10 @@
-package org.feiraconectada.feiraconectadaapi.service.endereco;
+package org.feiraconectada.feiraconectadaapi.service.endereco.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.feiraconectada.feiraconectadaapi.exceptions.NotFoundException;
 import org.feiraconectada.feiraconectadaapi.repository.endereco.EnderecoRepository;
 import org.feiraconectada.feiraconectadaapi.service.base.impl.BaseServiceImpl;
+import org.feiraconectada.feiraconectadaapi.service.endereco.EnderecoService;
 import org.feiraconectada.feiraconectadaapi.service.endereco.dto.EnderecoDto;
 import org.feiraconectada.feiraconectadaapi.service.endereco.form.EnderecoFiltrosForm;
 import org.springframework.data.domain.Page;

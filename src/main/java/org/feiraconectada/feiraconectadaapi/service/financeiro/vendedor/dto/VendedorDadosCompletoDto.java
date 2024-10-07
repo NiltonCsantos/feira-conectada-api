@@ -6,6 +6,6 @@ public interface VendedorDadosCompletoDto{
     Long getVenNrId();
     String getUsuTxNome();
     String getVenTxNumeroLoja();
-    NichoRoleEnum venTxNicho();
+    NichoRoleEnum getVenTxNicho();
     String getIvTxImagem();
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.feiraconectada.feiraconectadaapi.model.financeiro.enuns.StatusPedidoEnum;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "pp_pedido_produto", schema = "financeiro")
 public class PedidoProdutoEntidade {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pp_nr_id")
     private Long ppNrId;
 
@@ -27,4 +29,8 @@ public class PedidoProdutoEntidade {
     private Long proNrId;
     @Column(name = "usu_nr_id")
     private Long usuNrId;
+    @Column(name = "pp_nr_preco")
+    private BigDecimal ppNrPreco;
+    @Column(name = "pp_nr_quantidade_produto")
+    private Integer ppNrQuantidadeProduto;
 }

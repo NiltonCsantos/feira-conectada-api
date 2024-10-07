@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -68,5 +69,13 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntidade, Long> 
                      """)
     Page<ProdutoDadosCompletosDto> listarProdutoDadosCompletos(ProdutoFiltrosForm filtro,  Pageable pageable);
 
+    @Query(nativeQuery = true,
+            value = """
+                     select count(1) = :#{#proNrIds.size()}
+                                   from financeiro.pro_produto pro
+                                   where pro.pro_nr_id  in (:#{#proNrIds});
+                    """)
+    boolean existsProdutos(@Param("proNrIds")List<Long> proNrIds);
 
+    List<ProdutoEntidade> findByProNrIdIn(@Param("proNrIds") List<Long> proNrIds);
 }

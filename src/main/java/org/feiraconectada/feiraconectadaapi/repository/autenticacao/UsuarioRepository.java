@@ -23,7 +23,8 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntidade, Long> 
             value = """
                     select ven.ven_nr_id VenNrId, 
                     ven.ven_nr_loja VenTxNumeroLoja,
-                     usu.usu_tx_nome UsuTxNome
+                     usu.usu_tx_nome UsuTxNome,
+                     iv.iv_tx_imagem IvTxImagem
                       from financeiro.ven_vendedor ven
                     inner join autenticacao.usu_usuario usu on usu.usu_nr_id = ven.ven_nr_id
                     left join financeiro.iv_imagem_vendedor iv on ven.iv_nr_id = iv.iv_nr_id
