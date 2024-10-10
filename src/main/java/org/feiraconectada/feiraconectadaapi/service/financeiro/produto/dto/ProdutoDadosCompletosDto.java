@@ -8,4 +8,8 @@ public interface ProdutoDadosCompletosDto {
     String getEstTxNome();
     Long getEstNrId();
     String getIpTxImagem();
+    Long getVenNrId();
+    String getUsuTxNome();
+    String getVenTxNumeroLoja();
+    String getIvTxImagem();
 }

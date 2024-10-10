@@ -16,11 +16,9 @@ public interface EnderecoRepository extends JpaRepository<EnderecoEntidade, Long
                     FROM endereco.end_endereco en
                     LEFT JOIN endereco.eu_end_usu eeu ON eeu.end_nr_id = en.end_nr_id AND eeu.usu_nr_id =:usuNrId
                       WHERE eeu.usu_nr_id IS NULL
-                       and( 
-                                (:#{#filtro.endTxCep()==null} or en.end_tx_cep like concat(coalesce(:#{#filtro.endTxCep()?.trim()}, ''), '%'))
-                                or (:#{#filtro.endTxEstado()==null} or upper(en.end_tx_estado) like upper(concat(coalesce(:#{#filtro.endTxEstado()?.trim()}, ''), '%')))
-                                or (:#{#filtro.endTxNome()==null} or upper(en.end_tx_nome) like upper(concat(coalesce(:#{#filtro.endTxNome()?.trim()}, ''), '%')))
-                        )
+                       and (:#{#filtro.endTxCep()==null} or en.end_tx_cep like concat(coalesce(:#{#filtro.endTxCep()?.trim()}, ''), '%'))
+                       and (:#{#filtro.endTxEstado()==null} or upper(en.end_tx_estado) like upper(concat(coalesce(:#{#filtro.endTxEstado()?.trim()}, ''), '%')))
+                       and (:#{#filtro.endTxNome()==null} or upper(en.end_tx_nome) like upper(concat(coalesce(:#{#filtro.endTxNome()?.trim()}, ''), '%')))
                     """)
     Page<EnderecoEntidade> listarenderecos(EnderecoFiltrosForm filtro, @Param("usuNrId") Long usuNrId, Pageable pageable);
 

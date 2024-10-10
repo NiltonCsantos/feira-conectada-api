@@ -29,7 +29,7 @@ public class EnderecoController {
     @GetMapping("/enderecos")
     @Operation(summary = "Listagem de enderecos", description = "Endpoint responsável por listar enderecos.")
     @ApiResponse(responseCode = "200", description = "Ok", content = @Content(array = @ArraySchema(schema = @Schema( implementation = EnderecoDto.class))))
-    public ResponseEntity<Page<EnderecoDto>> listarEnderecos(@PageableDefault(size = 20) Pageable pageable, EnderecoFiltrosForm filtro){
+    public ResponseEntity<Page<EnderecoDto>> listarEnderecos(@PageableDefault(size = Integer.MAX_VALUE) Pageable pageable, EnderecoFiltrosForm filtro){
         var listaEnderecos= enderecoService.listarEnderecos(filtro, pageable);
         return  ResponseEntity.ok(listaEnderecos);
     }
