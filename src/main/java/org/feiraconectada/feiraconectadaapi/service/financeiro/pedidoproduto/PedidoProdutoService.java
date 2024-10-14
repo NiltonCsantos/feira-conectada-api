@@ -15,7 +15,7 @@ public interface PedidoProdutoService {
     //cliente
     Page<PedidoProdutoDadosCompletosDto> listarPedidosDoUsuario(PedidoProdutoFiltroForm filtro,Pageable pageable);
     //cliente
-    void verificarStatusDoPedido(List<Long> ppNrIds);
+    List<Long>  verificarStatusDoPedido(List<Long> ppNrIds);
     //vendedor
     void atualizarStatusDoPedido(StatusPedidoEnum  statusPedidoEnum, Long ppNrId);
 }

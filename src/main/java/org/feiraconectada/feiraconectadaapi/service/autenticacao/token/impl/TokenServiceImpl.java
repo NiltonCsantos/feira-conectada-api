@@ -32,7 +32,7 @@ public class TokenServiceImpl implements TokenService {
                 .setSubject(usuario.getUsername())
                 .addClaims(claims)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 36000000)) // 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 15000)) // 10 horas
                 .signWith(getSignKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -54,25 +54,19 @@ public class TokenServiceImpl implements TokenService {
                 .setIssuer("auth-feira-app")
                 .setSubject(usuario.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 36000000)) // 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 5184000000L)) // 10 horas
                 .signWith(getSignKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
     @Override
     public String validarToken(String token) {
-        try {
             return Jwts.parserBuilder()
                     .setSigningKey(getSignKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
-        } catch (JwtException e) {
-            // Log para verificar o motivo da falha
-            System.err.println("Falha na validação do token: " + e.getMessage());
-            return null;
-        }
     }
     private Key getSignKey(){
         return Keys.hmacShaKeyFor(secret.getBytes());

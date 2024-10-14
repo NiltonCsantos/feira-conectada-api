@@ -2,6 +2,7 @@ package org.feiraconectada.feiraconectadaapi.config.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.feiraconectada.feiraconectadaapi.exceptions.NotFoundException;
+import org.feiraconectada.feiraconectadaapi.exceptions.QuantidadeDeProdutosInsuficenteException;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -139,14 +140,14 @@ public class RestExceptionHandler {
         var message = this.gerarRestErrorMessageErroInterno( ex, request, locale);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
-//    @ExceptionHandler(RegistredException.class)
-//    public ResponseEntity<RestErrorMessage> handleRegistredException (RegistredException ex, HttpServletRequest request, Locale locale) {
-//
-//        logger.error(ex.getMessage(), ex);
-//
-//        var message = this.gerarRestErrorMessageDinamico(HttpStatus.CONFLICT, ex, request, locale);
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
-//    }
+    @ExceptionHandler(QuantidadeDeProdutosInsuficenteException.class)
+    public ResponseEntity<RestErrorMessage> handleRegistredException (QuantidadeDeProdutosInsuficenteException ex, HttpServletRequest request, Locale locale) {
+
+        logger.error(ex.getMessage(), ex);
+
+        var message = this.gerarRestErrorMessageDinamico(HttpStatus.CONFLICT, ex, request, locale);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
 
     private List<ValidateExceptionResponse.Field> processarErros(List<FieldError> fieldErrors) {
         return fieldErrors.stream()

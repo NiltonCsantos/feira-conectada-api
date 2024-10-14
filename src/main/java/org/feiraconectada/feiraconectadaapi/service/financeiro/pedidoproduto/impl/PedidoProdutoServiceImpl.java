@@ -79,25 +79,43 @@ public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoP
     }
 
     @Override
-    public void verificarStatusDoPedido(List<Long> ppNrIds) {
+    @Transactional
+    public List<Long>  verificarStatusDoPedido(List<Long> ppNrIds) {
 
-        var pedidosProdutos = pedidoProdutoRepository
-                .findAllById(ppNrIds);
+        Long usuNrId = buscarUsuarioAutenticado().getUsuNrId();
 
-        var pedidosCriados = pedidosProdutos.stream()
-                .filter(pedidoProdutoEntidade ->
-                        pedidoProdutoEntidade.getPpTxStatus() == StatusPedidoEnum.CRIADO)
+        var listaPedidosEmAndamento = pedidoProdutoRepository.findAllPedidosStatusCriadoByUsuNrId(ppNrIds, usuNrId);
+
+        var listaPedidoProdutosParaCancelar = new ArrayList<PedidoProdutoEntidade>();
+        var listaProdutosParaAtulizarQuantidade = new ArrayList<ProdutoEntidade>();
+
+        var pedidosCriados = listaPedidosEmAndamento.stream()
+                .filter(pedidoProdutoEntidade -> pedidoProdutoEntidade.getPpTxStatus() == StatusPedidoEnum.CRIADO)
                 .toList();
 
         LocalDateTime momentoAtual = LocalDateTime.now();
 
         for (PedidoProdutoEntidade pedidoProduto:pedidosCriados){
-            if (Duration.between(pedidoProduto.getPpDtCriado(), momentoAtual).toMinutes() >= 10) {
+            if (Duration.between(pedidoProduto.getPpDtCriado(), momentoAtual).toMinutes() >= 30) {
+
+                var produto = produtoRepository
+                        .findById(pedidoProduto.getProNrId())
+                                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+
+                produto.setProNrQuantidade(produto.getProNrQuantidade() + pedidoProduto.getPpNrQuantidadeProduto());
                 pedidoProduto.setPpTxStatus(StatusPedidoEnum.CANCELAD0);
+
+                listaProdutosParaAtulizarQuantidade.add(produto);
+                listaPedidoProdutosParaCancelar.add(pedidoProduto);
             }
         }
 
-        pedidoProdutoRepository.saveAll(pedidosProdutos);
+        pedidoProdutoRepository.saveAll(listaPedidoProdutosParaCancelar);
+        produtoRepository.saveAll(listaProdutosParaAtulizarQuantidade);
+
+        return listaPedidoProdutosParaCancelar.stream()
+                .map(PedidoProdutoEntidade::getPpNrId)
+                .toList();
     }
 
     @Override

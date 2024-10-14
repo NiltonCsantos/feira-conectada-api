@@ -47,4 +47,11 @@ public class ProdutoController {
         return ResponseEntity.ok( produtoService.buscarProdutoPorId(proNrId));
     }
 
+    @GetMapping("/produtos/vendedores/{venNrId}/nichos/{nicNrId}")
+    @Operation(summary = "buscar produtos do vendedor por nicho", description = "Endpoint responsável por buscar produtos do vendedor por nicho")
+    @ApiResponse(responseCode = "200", description = "Ok", content = @Content(array = @ArraySchema(schema = @Schema( implementation = ProdutoDadosCompletosDto.class))))
+    public ResponseEntity<Page<ProdutoDadosCompletosDto>> listarProdutos(@PathVariable Long venNrId, @PathVariable Long nicNrId, Pageable pageable){
+        return ResponseEntity.ok( produtoService.listarProdutosDoVendedorPorNicNrId(venNrId, nicNrId, pageable));
+    }
+
 }

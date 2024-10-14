@@ -11,5 +11,6 @@ import org.springframework.data.domain.Pageable;
 public interface ProdutoService {
     void cadatrarOuAtualizarProduto(ProdutoForm produtoForm);
     Page<ProdutoDadosCompletosDto> listarProdutos( ProdutoFiltrosForm filtros, Pageable pageable);
+    Page<ProdutoDadosCompletosDto> listarProdutosDoVendedorPorNicNrId(Long venNrId, Long nicNrId, Pageable pageable);
     ProdutoDadosCompletosDto buscarProdutoPorId(Long proNrId);
 }

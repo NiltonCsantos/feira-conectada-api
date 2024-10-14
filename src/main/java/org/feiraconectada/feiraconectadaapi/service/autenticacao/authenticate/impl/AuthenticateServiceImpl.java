@@ -153,7 +153,6 @@ public class AuthenticateServiceImpl implements AuthenticationService {
 
         CustomUserDetails user= usuarioRepository.findByUsuTxEmail(email);
 
-
         if (user==null){
             throw  new NotFoundException("Ocorreu um erro ao buscar o usuário");
         }

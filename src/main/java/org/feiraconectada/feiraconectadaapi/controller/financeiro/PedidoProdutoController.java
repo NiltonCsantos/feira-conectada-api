@@ -47,15 +47,15 @@ public class PedidoProdutoController {
     @GetMapping("/pedidos-produtos/verificar-pedidos")
     @Operation(summary = "Verificar status do pedido", description = "Endpoint responsável por verifcar o status de um pedido.")
     @ApiResponse(responseCode = "200", description = "OK")
-    public ResponseEntity<Void> verificarStatusDoPedido( @RequestParam List<Long> ppNrIds) {
-        this.pedidoProdutoService.verificarStatusDoPedido(ppNrIds);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<List<Long>> verificarStatusDoPedido( @RequestParam List<Long> ppNrIds) {
+        var listaProdutosCancelados = pedidoProdutoService.verificarStatusDoPedido(ppNrIds);
+        return ResponseEntity.status(HttpStatus.OK).body(listaProdutosCancelados);
     }
     //cliente
     @GetMapping("/pedidos-produtos")
     @Operation(summary = "Listar pedido", description = "Endpoint responsável por listar os pedidos de um usuário.")
     @ApiResponse(responseCode = "200", description = "OK")
-    public ResponseEntity<Page<PedidoProdutoDadosCompletosDto>> listarPedido(PedidoProdutoFiltroForm filtro, @PageableDefault (size = 15) Pageable pageable) {
+    public ResponseEntity<Page<PedidoProdutoDadosCompletosDto>> listarPedido(PedidoProdutoFiltroForm filtro, @PageableDefault (size = Integer.MAX_VALUE) Pageable pageable) {
         var pedidoProdutoDadosCompletosDtos = this.pedidoProdutoService.listarPedidosDoUsuario(filtro, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(pedidoProdutoDadosCompletosDtos);
     }

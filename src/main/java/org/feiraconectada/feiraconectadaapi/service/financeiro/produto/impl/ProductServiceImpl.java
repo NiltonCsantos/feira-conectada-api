@@ -56,4 +56,8 @@ public class ProductServiceImpl implements ProdutoService {
         return produto;
     }
 
+    @Override
+    public Page<ProdutoDadosCompletosDto> listarProdutosDoVendedorPorNicNrId(Long venNrId, Long nicNrId, Pageable pageable) {
+        return produtoRepository.findAllByVenNrIdAndNicNrId(venNrId, nicNrId, pageable);
+    }
 }

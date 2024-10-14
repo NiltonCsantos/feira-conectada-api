@@ -1,9 +1,14 @@
 package org.feiraconectada.feiraconectadaapi.config.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.feiraconectada.feiraconectadaapi.exceptions.AuthException;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.authenticate.UserDetailsServiceImpl;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.token.TokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,32 +21,47 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
-
     private final UserDetailsService userDetailsServiceImpl;
-    public SecurityFilter(TokenService tokenService, UserDetailsServiceImpl userDetailsServiceImpl) {
 
-        this.tokenService=tokenService;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String token=this.recoveryToken(request);
 
+
         if (token != null){
 
-            String email= tokenService.validarToken(token);
+            try {
+                String email= tokenService.validarToken(token);
 
-            UserDetails user= userDetailsServiceImpl.loadUserByUsername(email);
+                UserDetails user= userDetailsServiceImpl.loadUserByUsername(email);
 
-            var auth= new UsernamePasswordAuthenticationToken(user, email, user.getAuthorities());
+                var auth= new UsernamePasswordAuthenticationToken(user, email, user.getAuthorities());
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }catch (ExpiredJwtException e){
+
+                AuthException exception= new AuthException("Token expirado", e);
+
+                customAuthenticationEntryPoint.commence(request, response, exception);
+
+
+                return;
+            }catch (MalformedJwtException e){
+
+                AuthException exception= new AuthException("Token mal formado", e);
+                customAuthenticationEntryPoint.commence(request, response, exception);
+
+                SecurityContextHolder.clearContext();
+                return;
+            }
 
         }
 

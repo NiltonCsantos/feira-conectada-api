@@ -51,10 +51,11 @@ public class AuthenticationController {
         return  ResponseEntity.ok(authenticationService.fazerLogin(userLoginForm));
     }
 
-    @PostMapping("/login-com-token")
+    @PostMapping("/login-com-token/{refreshToken}")
     @Operation(summary = "Login de usuarios com token", description = "Endpoint responsável por permitir que um usuario faça login com token.")
     @ApiResponse(responseCode = "200", description = "OK")
-    public ResponseEntity<AuthDto> loginComToken(@RequestParam String refreshtoken){
-        return ResponseEntity.ok( this.authenticationService.fazerLoginComToken(refreshtoken));
+    public ResponseEntity<AuthDto> loginComToken(@PathVariable String refreshToken){
+        System.out.println("TOKENNNNNNNNNN");
+        return ResponseEntity.ok( this.authenticationService.fazerLoginComToken(refreshToken));
     }
 }

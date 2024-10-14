@@ -1,5 +1,6 @@
 package org.feiraconectada.feiraconectadaapi.service.financeiro.pedidoproduto.dto;
 
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -15,4 +16,5 @@ public interface PedidoProdutoDadosCompletosDto {
     String getIpTxImagem();
     Long getVenNrId();
     String getVenTxNome();
+    String getIvTxImagem();
 }
