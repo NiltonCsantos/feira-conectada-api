@@ -23,6 +23,7 @@ import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.form.Us
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.form.UsuarioRegistroForm;
 import org.feiraconectada.feiraconectadaapi.service.mail.MailService;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.token.TokenService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,9 +50,9 @@ public class AuthenticateServiceImpl implements AuthenticationService {
 
 
     @Override
+    @Async
     public void salvarUsuario(UsuarioRegistroForm form) {
 
-        //todo: melhorar isso aqui
         if (this.usuarioRepository.findByUsuTxEmail(form.usuTxEmail())!=null){
             throw new RegistredUserException();
         }

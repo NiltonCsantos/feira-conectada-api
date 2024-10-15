@@ -10,12 +10,14 @@ import org.feiraconectada.feiraconectadaapi.model.financeiro.enuns.StatusPedidoE
 import org.feiraconectada.feiraconectadaapi.repository.financeiro.PedidoProdutoRepository;
 import org.feiraconectada.feiraconectadaapi.repository.financeiro.ProdutoRepository;
 import org.feiraconectada.feiraconectadaapi.service.base.impl.BaseServiceImpl;
+import org.feiraconectada.feiraconectadaapi.service.expo.ExpoServiceImpl;
 import org.feiraconectada.feiraconectadaapi.service.financeiro.pedidoproduto.PedidoProdutoService;
 import org.feiraconectada.feiraconectadaapi.service.financeiro.pedidoproduto.dto.PedidoProdutoDadosCompletosDto;
 import org.feiraconectada.feiraconectadaapi.service.financeiro.pedidoproduto.form.PedidoProdutoFiltroForm;
 import org.feiraconectada.feiraconectadaapi.service.financeiro.pedidoproduto.form.PedidoProdutoForm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,6 +32,7 @@ public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoP
 
     private final PedidoProdutoRepository pedidoProdutoRepository;
     private final ProdutoRepository produtoRepository;
+    private final ExpoServiceImpl expoService;
 
     @Override
     @Transactional
@@ -82,9 +85,9 @@ public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoP
     @Transactional
     public List<Long>  verificarStatusDoPedido(List<Long> ppNrIds) {
 
-        Long usuNrId = buscarUsuarioAutenticado().getUsuNrId();
+        var usuario= buscarUsuarioAutenticado();
 
-        var listaPedidosEmAndamento = pedidoProdutoRepository.findAllPedidosStatusCriadoByUsuNrId(ppNrIds, usuNrId);
+        var listaPedidosEmAndamento = pedidoProdutoRepository.findAllPedidosStatusCriadoByUsuNrId(ppNrIds, usuario.getUsuNrId());
 
         var listaPedidoProdutosParaCancelar = new ArrayList<PedidoProdutoEntidade>();
         var listaProdutosParaAtulizarQuantidade = new ArrayList<ProdutoEntidade>();
@@ -112,6 +115,12 @@ public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoP
 
         pedidoProdutoRepository.saveAll(listaPedidoProdutosParaCancelar);
         produtoRepository.saveAll(listaProdutosParaAtulizarQuantidade);
+
+        listaProdutosParaAtulizarQuantidade.forEach(produtoEntidade -> {
+            enviarNotificacoes(usuario.getUsuTxExpoToken(), produtoEntidade.getProTxNome() + "Cancelado :(",
+                    "Sentimos muito pelo incoveniente. Tente realizar o pedido com outro vendedor. Abraços"
+       );
+        });
 
         return listaPedidoProdutosParaCancelar.stream()
                 .map(PedidoProdutoEntidade::getPpNrId)
@@ -160,6 +169,11 @@ public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoP
         }
 
         return valor;
+    }
+
+    @Async
+    protected void enviarNotificacoes(String expoToken, String titulo, String mensagem){
+        expoService.sendPushNotification(expoToken,mensagem, titulo );
     }
 
 }

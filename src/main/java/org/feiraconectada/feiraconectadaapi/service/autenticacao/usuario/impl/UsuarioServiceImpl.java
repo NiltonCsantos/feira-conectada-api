@@ -7,6 +7,7 @@ import org.feiraconectada.feiraconectadaapi.repository.autenticacao.UsuarioRepos
 import org.feiraconectada.feiraconectadaapi.repository.endereco.EnderecoRepository;
 import org.feiraconectada.feiraconectadaapi.repository.endereco.UsuarioEnderecoRepository;
 import org.feiraconectada.feiraconectadaapi.repository.financeiro.VendedorRepository;
+import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.dto.ExpoTokenForm;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.dto.UsuarioDto;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.form.UsuarioEdicaoForm;
 import org.feiraconectada.feiraconectadaapi.service.endereco.dto.EnderecoDto;
@@ -69,4 +70,12 @@ public class UsuarioServiceImpl extends BaseServiceImpl implements UsuarioServic
 
     }
 
+    @Override
+    public void atualizarTokenDeNotificacao(ExpoTokenForm form) {
+        var usuario = this.buscarUsuarioAutenticado();
+        if (usuario.getUsuTxExpoToken()==null || usuario.getUsuTxExpoToken().equals(form.token())){
+            usuario.setUsuTxExpoToken(form.token());
+            usuarioRepository.save(usuario);
+        }
+    }
 }

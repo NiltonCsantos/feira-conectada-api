@@ -1,5 +1,6 @@
 package org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario;
 
+import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.dto.ExpoTokenForm;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.dto.UsuarioDto;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.form.UsuarioEdicaoForm;
 import org.feiraconectada.feiraconectadaapi.service.endereco.dto.EnderecoDto;
@@ -17,4 +18,5 @@ public interface UsuarioService {
     Page<VendedorDadosBasicosDto> listarFeirantesComImagem(VendedorFiltrosForm filtro, Pageable pageable);
     UsuarioDto editarDadosUsuario(UsuarioEdicaoForm usuarioEdicaoForm);
     void realizarCompra(List<Long> proNrIds);
+    void atualizarTokenDeNotificacao(ExpoTokenForm form);
 }

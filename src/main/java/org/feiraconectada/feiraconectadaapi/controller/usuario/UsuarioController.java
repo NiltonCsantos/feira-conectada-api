@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.dto.ExpoTokenForm;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.dto.UsuarioDto;
 import org.feiraconectada.feiraconectadaapi.service.autenticacao.usuario.form.UsuarioEdicaoForm;
 import org.feiraconectada.feiraconectadaapi.service.endereco.dto.EnderecoDto;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    private final FireBaseService fireBaseService;
+
     @GetMapping("/usuarios/enderecos")
     @Operation(summary = "Listagem de enderecos do usuário autenticado", description = "Endpoint responsável por listar enderecos do usuário autenticado.")
     @ApiResponse(responseCode = "200", description = "Ok", content = @Content(array = @ArraySchema(schema = @Schema( implementation = EnderecoDto.class))))
@@ -59,11 +61,11 @@ public class UsuarioController {
         return  ResponseEntity.status(HttpStatus.OK).body(usuarioDto);
     }
 
-    @PutMapping("teste")
-    @Operation(summary = "Editar dados de um usuário", description = "Endpoint responsável por Editar dados de um usuário.")
+    @PatchMapping("/usuarios/atualizar-token")
+    @Operation(summary = "Editar dados de um usuário", description = "Endpoint responsável por atualizar token de notificação do usuário.")
     @ApiResponse(responseCode = "204", description = "NO CONTENT")
-    public ResponseEntity<Void> tetse(){
-        fireBaseService.sendNotification("", "AAAAA", "BBBB");
+    public ResponseEntity<Void> atualizarExpoToken(@RequestBody @Valid ExpoTokenForm form){
+        usuarioService.atualizarTokenDeNotificacao(form);
         return  ResponseEntity.status(HttpStatus.OK).build();
     }
 

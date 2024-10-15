@@ -35,6 +35,9 @@ public class UsuarioEntidade implements CustomUserDetails {
     @Column(name = "usu_tx_senha")
     private String usuTxSenha;
 
+    @Column(name = "usu_tx_expo_token")
+    private String usuTxExpoToken;
+
     @ManyToOne
     @JoinColumn(name = "per_nr_id", nullable = false)
     @ToString.Exclude

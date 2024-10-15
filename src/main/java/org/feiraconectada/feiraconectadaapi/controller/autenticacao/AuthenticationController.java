@@ -55,7 +55,6 @@ public class AuthenticationController {
     @Operation(summary = "Login de usuarios com token", description = "Endpoint responsável por permitir que um usuario faça login com token.")
     @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<AuthDto> loginComToken(@PathVariable String refreshToken){
-        System.out.println("TOKENNNNNNNNNN");
         return ResponseEntity.ok( this.authenticationService.fazerLoginComToken(refreshToken));
     }
 }
