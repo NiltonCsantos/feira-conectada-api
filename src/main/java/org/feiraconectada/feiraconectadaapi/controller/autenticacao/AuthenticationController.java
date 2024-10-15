@@ -39,6 +39,14 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/ativar-conta/{token}")
+    @Operation(summary = "Ativar conta", description = "Endpoint responsável por ativar conta do usuário")
+    @ApiResponse(responseCode = "200", description = "OK")
+    public ResponseEntity<Void> registrarUsuario(@PathVariable String token){
+        authenticationService.ativarConta(token);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @PatchMapping("/redefinir-senha")
     public ResponseEntity<Void> redefinirSenha(){
         return ResponseEntity.ok().build();

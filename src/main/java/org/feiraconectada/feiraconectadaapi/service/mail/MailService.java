@@ -36,15 +36,12 @@ public class MailService {
        try {
 
            final MimeMessage mimeMessage= this.mailSender.createMimeMessage();
-
            final MimeMessageHelper emailHelper;
 
            emailHelper= new MimeMessageHelper(mimeMessage, true, "UTF-8");
-
            emailHelper.setTo(email);
            emailHelper.setSubject("Boas vindas");
            emailHelper.setFrom(supportEmail);
-
 
            final Context context= new Context();
 
@@ -56,16 +53,11 @@ public class MailService {
 
            emailHelper.setText(htmlContent, true);
 
-
-//           ClassPathResource classPathResourceImage= new ClassPathResource("static/images/welcomme1.png");
+//         ClassPathResource classPathResourceImage= new ClassPathResource("static/images/welcomme1.png");
 //
 //
-//           emailHelper.addInline("background", classPathResourceImage, "image/png");
-
+//         emailHelper.addInline("background", classPathResourceImage, "image/png");
            mailSender.send(mimeMessage);
-
-
-
 
        }catch (SendMailException e){
            throw new SendMailException();

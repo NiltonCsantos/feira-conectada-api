@@ -35,7 +35,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         String token=this.recoveryToken(request);
 
-
         if (token != null){
 
             try {

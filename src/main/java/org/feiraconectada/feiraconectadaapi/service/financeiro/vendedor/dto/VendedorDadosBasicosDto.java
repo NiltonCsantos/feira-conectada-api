@@ -5,4 +5,5 @@ public interface VendedorDadosBasicosDto {
     String getUsuTxNome();
     String getVenTxNumeroLoja();
     String getIvTxImagem();
+    String getNicTxNome();
 }

@@ -167,6 +167,13 @@ public class AuthenticateServiceImpl implements AuthenticationService {
         return new AuthDto(acessToken, refreshToken);
     }
 
+    @Override
+    public void ativarConta(String token) {
+        var email = tokenService.validarToken(token);
+        var usuario = (UsuarioEntidade) usuarioRepository.findByUsuTxEmail(email);
+        usuario.setUsublAtivo(true);
+        usuarioRepository.save(usuario);
+    }
 
     private Map<String, Object> preencherClaims(UsuarioDto usario){
         Map<String, Object> claims = new HashMap<>();

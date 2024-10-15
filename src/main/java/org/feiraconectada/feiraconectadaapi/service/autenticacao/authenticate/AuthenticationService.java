@@ -10,4 +10,5 @@ public interface AuthenticationService {
     void salvarFeirante(FeiranteRegistroForm user);
     AuthDto fazerLogin(UsuarioLoginForm user);
     AuthDto fazerLoginComToken(String refreshToken);
+    void ativarConta(String token);
 }
