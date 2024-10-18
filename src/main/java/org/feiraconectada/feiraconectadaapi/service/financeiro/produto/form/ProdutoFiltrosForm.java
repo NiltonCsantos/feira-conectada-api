@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import org.feiraconectada.feiraconectadaapi.model.financeiro.enuns.NichoRoleEnum;
 
 import java.math.BigDecimal;
@@ -14,6 +15,8 @@ public record ProdutoFiltrosForm(
         Long estNrId,
         Long nicNrId,
         Long venNrId,
-        NichoRoleEnum nicTxNome
+        NichoRoleEnum nicTxNome,
+        @NotNull
+        Long endNrId
 ) {
 }

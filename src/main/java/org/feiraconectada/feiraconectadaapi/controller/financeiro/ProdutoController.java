@@ -37,6 +37,7 @@ public class ProdutoController {
     @Operation(summary = "buscar produtos", description = "Endpoint responsável por buscar produtos")
     @ApiResponse(responseCode = "200", description = "Ok", content = @Content(array = @ArraySchema(schema = @Schema( implementation = ProdutoDadosCompletosDto.class))))
     public ResponseEntity<Page<ProdutoDadosCompletosDto>> listarProdutos( ProdutoFiltrosForm form, Pageable pageable){
+        System.out.println(form.nicTxNome());
         return ResponseEntity.ok( produtoService.listarProdutos(form, pageable));
     }
 
