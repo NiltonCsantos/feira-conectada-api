@@ -73,7 +73,7 @@ public class UsuarioServiceImpl extends BaseServiceImpl implements UsuarioServic
     @Override
     public void atualizarTokenDeNotificacao(ExpoTokenForm form) {
         var usuario = this.buscarUsuarioAutenticado();
-        if (usuario.getUsuTxExpoToken()==null || usuario.getUsuTxExpoToken().equals(form.token())){
+        if (usuario.getUsuTxExpoToken()==null || !usuario.getUsuTxExpoToken().equals(form.token())){
             usuario.setUsuTxExpoToken(form.token());
             usuarioRepository.save(usuario);
         }

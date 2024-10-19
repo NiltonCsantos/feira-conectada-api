@@ -1,20 +1,21 @@
 package org.feiraconectada.feiraconectadaapi.service.financeiro.pedidoproduto.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.feiraconectada.feiraconectadaapi.service.financeiro.pedidoproduto.DadosSerializer;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 
+@JsonPropertyOrder({ "venNrId", "usuTxNome", "venNrLoja", "ivTxImagem", "pedDtCriado", "pedido" })
 public interface PedidoProdutoDadosCompletosDto {
-    Long getPpNrId();
-    LocalDateTime getPpDtCriado();
-    String getPpTxStatus();
-    BigDecimal getPpNrPreco();
-    Integer getPpNrQuantidadeProduto();
-    Long getProNrId();
-    BigDecimal getProNrPreco();
-    String getProTxNome();
-    String getIpTxImagem();
     Long getVenNrId();
-    String getVenTxNome();
+    String getUsuTxNome();
+    Integer getVenNrLoja();
     String getIvTxImagem();
+    Date getPedDtCriado();
+    @JsonSerialize(using = DadosSerializer.class)
+    String getPedido();
 }

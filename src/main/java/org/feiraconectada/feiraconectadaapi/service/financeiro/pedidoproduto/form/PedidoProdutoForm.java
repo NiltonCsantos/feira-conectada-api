@@ -12,7 +12,7 @@ public record PedidoProdutoForm(
         @NotNull
         @Min(1)
         @JsonProperty(required = true)
-        Integer proNrQuantidade
+        Integer ppNrQuantidade
         )
 {
 }

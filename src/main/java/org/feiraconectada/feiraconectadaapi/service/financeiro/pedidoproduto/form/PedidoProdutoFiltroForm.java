@@ -3,6 +3,6 @@ package org.feiraconectada.feiraconectadaapi.service.financeiro.pedidoproduto.fo
 import org.feiraconectada.feiraconectadaapi.model.financeiro.enuns.StatusPedidoEnum;
 
 public record PedidoProdutoFiltroForm(
-        StatusPedidoEnum ppTxStatus
+        StatusPedidoEnum pedTxStatus
 ) {
 }

@@ -4,10 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.feiraconectada.feiraconectadaapi.exceptions.NotFoundException;
 import org.feiraconectada.feiraconectadaapi.exceptions.QuantidadeDeProdutosInsuficenteException;
+import org.feiraconectada.feiraconectadaapi.model.financeiro.PedidoEntidade;
 import org.feiraconectada.feiraconectadaapi.model.financeiro.PedidoProdutoEntidade;
 import org.feiraconectada.feiraconectadaapi.model.financeiro.ProdutoEntidade;
 import org.feiraconectada.feiraconectadaapi.model.financeiro.enuns.StatusPedidoEnum;
 import org.feiraconectada.feiraconectadaapi.repository.financeiro.PedidoProdutoRepository;
+import org.feiraconectada.feiraconectadaapi.repository.financeiro.PedidoRepository;
 import org.feiraconectada.feiraconectadaapi.repository.financeiro.ProdutoRepository;
 import org.feiraconectada.feiraconectadaapi.service.base.impl.BaseServiceImpl;
 import org.feiraconectada.feiraconectadaapi.service.expo.ExpoServiceImpl;
@@ -28,50 +30,67 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoProdutoService{
+public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoProdutoService {
 
     private final PedidoProdutoRepository pedidoProdutoRepository;
     private final ProdutoRepository produtoRepository;
     private final ExpoServiceImpl expoService;
+    private final PedidoRepository pedidoRepository;
 
     @Override
     @Transactional
     public void criarPedido(List<PedidoProdutoForm> pedidoProdutosForm) {
 
-        var usuNrId = this.buscarUsuarioAutenticado().getUsuNrId();
+        var usuario = this.buscarUsuarioAutenticado();
 
         List<Long> proNrIds = new ArrayList<>();
 
         pedidoProdutosForm.forEach(pedidoProdutoForm -> proNrIds.add(pedidoProdutoForm.proNrId()));
 
-        var existsProNrIds = produtoRepository.existsProdutos(proNrIds);
-
-        if (!existsProNrIds){
-            throw new NotFoundException("Um ou mais produtos selecionados não existem ou não estão disponíveis");
-        }
+//        var existsProNrIds = produtoRepository.existsProdutos(proNrIds);
 
         List<ProdutoEntidade> produtos = produtoRepository.findByProNrIdIn(proNrIds);
 
+        if (produtos.size()<pedidoProdutosForm.size()) {
+            throw new NotFoundException("Um ou mais produtos selecionados não existem ou não estão disponíveis");
+        }
+
+//        List<ProdutoEntidade> produtos = produtoRepository.findByProNrIdIn(proNrIds);
+
+        var pedido = new PedidoEntidade();
+        pedido.setPedDtCriado(LocalDateTime.now());
+        pedido.setPedTxStatus(StatusPedidoEnum.CRIADO);
+        pedido.setUsuNrId(usuario.getUsuNrId());
+
         List<PedidoProdutoEntidade> pedidosProdutos = new ArrayList<>();
 
-        for (var pedido: pedidoProdutosForm){
+        BigDecimal valorTotalPedido = BigDecimal.ZERO;
 
-            final var valorTotalPedido = calcularValorPedido(produtos, pedido);
+        for (var pedidoProdutoForm : pedidoProdutosForm) {
 
+            var valorPedidoProduto = calcularValorPedidoProduto(produtos, pedidoProdutoForm);
+            valorTotalPedido = valorTotalPedido.add(valorPedidoProduto);
             var pedidoProduto = PedidoProdutoEntidade
                     .builder()
-                    .ppTxStatus(StatusPedidoEnum.CRIADO)
-                    .ppDtCriado(LocalDateTime.now())
-                    .proNrId(pedido.proNrId())
-                    .usuNrId(usuNrId)
-                    .ppNrPreco(valorTotalPedido)
-                    .ppNrQuantidadeProduto(pedido.proNrQuantidade())
+                    .proNrId(pedidoProdutoForm.proNrId())
+                    .ppNrPreco(valorPedidoProduto)
+                    .ppNrQuantidadeProduto(pedidoProdutoForm.ppNrQuantidade())
                     .build();
 
             pedidosProdutos.add(pedidoProduto);
         }
 
+        pedido.setPedNrValorTotal(valorTotalPedido);
+
+        pedidoRepository.save(pedido);
+
+        pedidosProdutos.forEach(pedidoProdutoEntidade -> {
+            pedidoProdutoEntidade.setPedNrId(pedido.getPedNrId());
+        });
+
         pedidoProdutoRepository.saveAll(pedidosProdutos);
+        enviarNotificacoes(usuario.getUsuTxExpoToken(), "Pedido criado",
+                "Em breve o vendedor aceitará o pedido.");
 
     }
 
@@ -83,62 +102,55 @@ public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoP
 
     @Override
     @Transactional
-    public List<Long>  verificarStatusDoPedido(List<Long> ppNrIds) {
+    public List<Long> verificarStatusDoPedido(List<Long> pedNrIds) {
 
-        var usuario= buscarUsuarioAutenticado();
+        var usuario = buscarUsuarioAutenticado();
 
-        var listaPedidosEmAndamento = pedidoProdutoRepository.findAllPedidosStatusCriadoByUsuNrId(ppNrIds, usuario.getUsuNrId());
+        var listaPedidosCriados = pedidoRepository.findPedidoStatusCriadoByUsuNrId(pedNrIds, usuario.getUsuNrId());
 
-        var listaPedidoProdutosParaCancelar = new ArrayList<PedidoProdutoEntidade>();
-        var listaProdutosParaAtulizarQuantidade = new ArrayList<ProdutoEntidade>();
+        var listaPedidoParaCancelar = new ArrayList<PedidoEntidade>();
+        var listaProdutosParaAtualizarQuantidade = new ArrayList<ProdutoEntidade>();
 
-        var pedidosCriados = listaPedidosEmAndamento.stream()
-                .filter(pedidoProdutoEntidade -> pedidoProdutoEntidade.getPpTxStatus() == StatusPedidoEnum.CRIADO)
-                .toList();
 
         LocalDateTime momentoAtual = LocalDateTime.now();
 
-        for (PedidoProdutoEntidade pedidoProduto:pedidosCriados){
-            if (Duration.between(pedidoProduto.getPpDtCriado(), momentoAtual).toMinutes() >= 30) {
+        for (PedidoEntidade pedido : listaPedidosCriados) {
+            if (Duration.between(pedido.getPedDtCriado(), momentoAtual).toMinutes() >= 30) {
 
-                var produto = produtoRepository
-                        .findById(pedidoProduto.getProNrId())
-                                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+                pedido.setPedTxStatus(StatusPedidoEnum.CANCELADO);
 
-                produto.setProNrQuantidade(produto.getProNrQuantidade() + pedidoProduto.getPpNrQuantidadeProduto());
-                pedidoProduto.setPpTxStatus(StatusPedidoEnum.CANCELAD0);
-
-                listaProdutosParaAtulizarQuantidade.add(produto);
-                listaPedidoProdutosParaCancelar.add(pedidoProduto);
+                var listaProdutosQuantidadeAtualizada = atualizarQuantidadeDoProduto(pedido);
+                listaProdutosParaAtualizarQuantidade.addAll(listaProdutosQuantidadeAtualizada);
+                listaPedidoParaCancelar.add(pedido);
             }
         }
 
-        pedidoProdutoRepository.saveAll(listaPedidoProdutosParaCancelar);
-        produtoRepository.saveAll(listaProdutosParaAtulizarQuantidade);
+        pedidoRepository.saveAll(listaPedidoParaCancelar);
+        produtoRepository.saveAll(listaProdutosParaAtualizarQuantidade);
 
-        listaProdutosParaAtulizarQuantidade.forEach(produtoEntidade -> {
-            enviarNotificacoes(usuario.getUsuTxExpoToken(), produtoEntidade.getProTxNome() + "Cancelado :(",
+        listaPedidoParaCancelar.forEach(produtoEntidade -> {
+            enviarNotificacoes(usuario.getUsuTxExpoToken(), "Pedido Cancelado :(",
                     "Sentimos muito pelo incoveniente. Tente realizar o pedido com outro vendedor. Abraços"
-       );
+            );
         });
 
-        return listaPedidoProdutosParaCancelar.stream()
-                .map(PedidoProdutoEntidade::getPpNrId)
+        return listaPedidoParaCancelar.stream()
+                .map(PedidoEntidade::getPedNrId)
                 .toList();
     }
 
     @Override
-    public void atualizarStatusDoPedido(StatusPedidoEnum statusPedidoEnum, Long ppNrId) {
+    public void atualizarStatusDoPedido(StatusPedidoEnum statusPedidoEnum, Long pedNrId) {
 
-            var pedidoProduto = pedidoProdutoRepository
-                    .findById(ppNrId)
-                    .orElseThrow(() -> new NotFoundException("Pedido não encontrado"));
+        var pedido = pedidoRepository
+                .findById(pedNrId)
+                .orElseThrow(() -> new NotFoundException("Pedido não encontrado"));
 
-            pedidoProduto.setPpTxStatus(statusPedidoEnum);
-            pedidoProdutoRepository.save(pedidoProduto);
+        pedido.setPedTxStatus(statusPedidoEnum);
+        pedidoRepository.save(pedido);
     }
 
-    private BigDecimal calcularValorPedido(List<ProdutoEntidade> produtos, PedidoProdutoForm form) {
+    private BigDecimal calcularValorPedidoProduto(List<ProdutoEntidade> produtos, PedidoProdutoForm form) {
 
         BigDecimal valor = BigDecimal.ZERO;
 
@@ -150,16 +162,16 @@ public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoP
 
             if (produto.getProNrId().equals(form.proNrId())) {
 
-                if (produto.getProNrQuantidade() < form.proNrQuantidade()) {
+                if (produto.getProNrQuantidade() < form.ppNrQuantidade()) {
                     throw new QuantidadeDeProdutosInsuficenteException(produto.getProTxNome());
                 }
 
                 BigDecimal precoProduto = produto.getProNrPreco();
-                BigDecimal quantidadeDesejada = BigDecimal.valueOf(form.proNrQuantidade());
+                BigDecimal quantidadeDesejada = BigDecimal.valueOf(form.ppNrQuantidade());
                 valor = valor.add(precoProduto.multiply(quantidadeDesejada));
-                produto.setProNrQuantidade(produto.getProNrQuantidade()-form.proNrQuantidade());
+                produto.setProNrQuantidade(produto.getProNrQuantidade() - form.ppNrQuantidade());
 
-                if (produto.getProNrQuantidade()==0){
+                if (produto.getProNrQuantidade() == 0) {
                     produto.setProBlAtivo(false);
                 }
 
@@ -172,8 +184,26 @@ public class PedidoProdutoServiceImpl extends BaseServiceImpl implements PedidoP
     }
 
     @Async
-    protected void enviarNotificacoes(String expoToken, String titulo, String mensagem){
-        expoService.sendPushNotification(expoToken,mensagem, titulo );
+    protected void enviarNotificacoes(String expoToken, String titulo, String mensagem) {
+        expoService.sendPushNotification(expoToken, mensagem, titulo);
     }
 
+    private List<ProdutoEntidade> atualizarQuantidadeDoProduto(PedidoEntidade pedido){
+
+       var listaPedidosProduto = pedidoProdutoRepository.findAllByPedNrId(pedido.getPedNrId());
+
+       var listaProdutos = new ArrayList<ProdutoEntidade>();
+
+       for (var pedidoProduto:listaPedidosProduto){
+           var produto = produtoRepository
+                   .findById(pedidoProduto.getProNrId())
+                   .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+
+           produto.setProNrQuantidade(produto.getProNrQuantidade() + pedidoProduto.getPpNrQuantidadeProduto());
+            listaProdutos.add(produto);
+       }
+
+       return listaProdutos;
+
+    }
 }

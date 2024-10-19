@@ -22,7 +22,6 @@ public class MailService {
     private String urlConfirmation;
 
     private  final JavaMailSender mailSender;
-
     private  final TemplateEngine templateEngine;
 
     public MailService( JavaMailSender mailSender, TemplateEngine templateEngine) {
@@ -45,9 +44,11 @@ public class MailService {
 
            final Context context= new Context();
 
+           urlConfirmation+=tokentemporario;
+
            context.setVariable("fullName", fullName);
            context.setVariable("urlConfirmation", urlConfirmation);
-           context.setVariable("token", tokentemporario);
+
 
            final String htmlContent= this.templateEngine.process("email", context);
 

@@ -54,7 +54,7 @@ public class TokenServiceImpl implements TokenService {
                 .setIssuer("auth-feira-app")
                 .setSubject(usuario.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 5184000000L)) // 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 5184000000L)) // 60 dias
                 .signWith(getSignKey(), SignatureAlgorithm.HS512)
                 .compact();
     }

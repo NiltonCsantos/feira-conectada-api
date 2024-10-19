@@ -48,7 +48,7 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntidade, Long> 
 
     @Query(nativeQuery = true,
             value = """
-                       select
+                       select distinct
                         pro.pro_nr_id ProNrId,
                         pro.pro_tx_nome ProTxNome,
                         pro.pro_nr_preco ProNrPreco,
@@ -79,6 +79,7 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntidade, Long> 
                      """)
     Page<ProdutoDadosCompletosDto> listarProdutoDadosCompletos(ProdutoFiltrosForm filtro,  Pageable pageable);
 
+    //ajustar and
     @Query(nativeQuery = true,
             value = """
                      select count(1) = :#{#proNrIds.size()}
@@ -87,6 +88,13 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntidade, Long> 
                     """)
     boolean existsProdutos(@Param("proNrIds")List<Long> proNrIds);
 
+    @Query(nativeQuery = true,
+            value = """
+                    select 
+                        pro.*
+                        from financeiro.pro_produto pro
+                        where pro.pro_nr_id in (:proNrIds) and pro.pro_bl_ativo = true;
+                    """)
     List<ProdutoEntidade> findByProNrIdIn(@Param("proNrIds") List<Long> proNrIds);
 
     @Query(nativeQuery = true,
@@ -114,4 +122,18 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntidade, Long> 
             """
     )
     Page<ProdutoDadosCompletosDto> findAllByVenNrIdAndNicNrId(@Param("venNrId") Long venNrId, @Param("nicNrId") Long nicNrId, Pageable pageable);
+
+    @Query(nativeQuery = true,
+            value = """
+                    select
+                    	pro.*
+                    from
+                    	financeiro.pp_pedido_produto pp
+                    inner join pro_produto pro on
+                    	pro.pro_nr_id = pp.pro_nr_id
+                    where
+                    	pp.ped_nr_id =:pedNrId
+                    """
+    )
+    List<ProdutoEntidade> findAllByPedNrId(@Param("pedNrId") Long pedNrId);
 }

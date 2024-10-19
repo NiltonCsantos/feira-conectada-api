@@ -36,19 +36,19 @@ public class PedidoProdutoController {
     }
 
     //vendedor
-    @PatchMapping("/pedidos-produtos/{ppNrId}")
+    @PatchMapping("/pedidos-produtos/{pedNrId}")
     @Operation(summary = "Atualizar status do pedido", description = "Endpoint responsável por atualizar o status de um pedido.")
     @ApiResponse(responseCode = "200", description = "OK")
-    public ResponseEntity<Void> atualizarStatusDoPedido(@PathVariable Long ppNrId, @RequestParam StatusPedidoEnum ppTxStatus) {
-        this.pedidoProdutoService.atualizarStatusDoPedido(ppTxStatus, ppNrId);
+    public ResponseEntity<Void> atualizarStatusDoPedido(@PathVariable Long pedNrId, @RequestParam StatusPedidoEnum ppTxStatus) {
+        this.pedidoProdutoService.atualizarStatusDoPedido(ppTxStatus, pedNrId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     //cliente
     @GetMapping("/pedidos-produtos/verificar-pedidos")
     @Operation(summary = "Verificar status do pedido", description = "Endpoint responsável por verifcar o status de um pedido.")
     @ApiResponse(responseCode = "200", description = "OK")
-    public ResponseEntity<List<Long>> verificarStatusDoPedido( @RequestParam List<Long> ppNrIds) {
-        var listaProdutosCancelados = pedidoProdutoService.verificarStatusDoPedido(ppNrIds);
+    public ResponseEntity<List<Long>> verificarStatusDoPedido( @RequestParam List<Long> pedNrIds) {
+        var listaProdutosCancelados = pedidoProdutoService.verificarStatusDoPedido(pedNrIds);
         return ResponseEntity.status(HttpStatus.OK).body(listaProdutosCancelados);
     }
     //cliente
