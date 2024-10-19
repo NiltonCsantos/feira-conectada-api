@@ -32,7 +32,7 @@ public class TokenServiceImpl implements TokenService {
                 .setSubject(usuario.getUsername())
                 .addClaims(claims)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 15000)) // 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 1500000000)) // 10 horas
                 .signWith(getSignKey(), SignatureAlgorithm.HS512)
                 .compact();
     }

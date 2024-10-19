@@ -66,9 +66,11 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntidade, Long> 
                         left join financeiro.ip_imagem_produto ip on ip.ip_nr_id = pro.ip_nr_id
                         inner join financeiro.ven_vendedor ven on ven.ven_nr_id = est.ven_nr_id
                         inner join autenticacao.usu_usuario usu on usu.usu_nr_id = ven.ven_nr_id
+                        inner join endereco.eu_end_usu eu on eu.usu_nr_id = usu.usu_nr_id
                         left join financeiro.iv_imagem_vendedor iv on iv.iv_nr_id = ven.iv_nr_id
                             where (pro.pro_bl_ativo = true)
                                 and (:#{#filtro.venNrId()==null} or est.ven_nr_id =:#{#filtro.venNrId()})
+                                and (:#{#filtro.endNrId()==null} or eu.end_nr_id =:#{#filtro.endNrId()})
                                 and  (:#{#filtro.estNrId()==null} or est.est_nr_id =:#{#filtro.estNrId()})
                                 and  (:#{#filtro.nicNrId()==null} or nic.nic_nr_id =:#{#filtro.nicNrId()})
                                 and  (:#{#filtro.proNrPreco()==null} or pro.pro_nr_preco =:#{#filtro.proNrPreco()})
