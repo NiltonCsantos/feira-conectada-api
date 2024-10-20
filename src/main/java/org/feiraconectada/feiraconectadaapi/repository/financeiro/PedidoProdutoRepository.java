@@ -20,8 +20,8 @@ public interface PedidoProdutoRepository extends JpaRepository<PedidoProdutoEnti
     ven.ven_nr_id AS venNrId,
     usu.usu_tx_nome AS usuTxNome,
     ven.ven_nr_id AS venNrLoja,
-
-    ped.ped_dt_criado  datePedDtCriado,
+    iv.iv_tx_imagem as ivTxImagem,
+    cast (ped.ped_dt_criado as Date) pedDtCriado,
     json_build_object(
         'PedNrId', ped.ped_nr_id,
         'PedTxStatus', ped.ped_tx_status,
@@ -33,7 +33,7 @@ public interface PedidoProdutoRepository extends JpaRepository<PedidoProdutoEnti
                 'PpNrQuantidadeProduto', pp.pp_nr_quantidade_produto,
                 'ProNrId', pro.pro_nr_id,
                 'ProNrPreco', pro.pro_nr_preco,
-          
+                'IpTxImagem', ip.ip_tx_imagem,
                 'ProTxNome', pro.pro_tx_nome
             )
         )
