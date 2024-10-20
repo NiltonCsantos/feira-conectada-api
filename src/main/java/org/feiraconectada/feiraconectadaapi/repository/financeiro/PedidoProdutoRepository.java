@@ -34,7 +34,8 @@ public interface PedidoProdutoRepository extends JpaRepository<PedidoProdutoEnti
                 'ProNrId', pro.pro_nr_id,
                 'ProNrPreco', pro.pro_nr_preco,
                 'IpTxImagem', ip.ip_tx_imagem,
-                'ProTxNome', pro.pro_tx_nome
+                'ProTxNome', pro.pro_tx_nome,
+                'venNrId', ven.ven_nr_id\s
             )
         )
     ) AS Pedido

@@ -24,9 +24,14 @@ public interface EnderecoRepository extends JpaRepository<EnderecoEntidade, Long
 
     @Query(nativeQuery = true,
             value = """
-                    select en.* from endereco.end_endereco en
-                    inner join endereco.eu_end_usu eeu on eeu.end_nr_id = en.end_nr_id
-                    inner join autenticacao.usu_usuario usu on usu.usu_nr_id =:usuNrId
+                    select
+                    	en.*
+                    from
+                    	endereco.end_endereco en
+                    inner join endereco.eu_end_usu eeu on
+                    	eeu.end_nr_id = en.end_nr_id
+                    inner join autenticacao.usu_usuario usu on usu.usu_nr_id = eeu.usu_nr_id\s
+                    where eeu.usu_nr_id =:usuNrId
                     """)
     Page<EnderecoEntidade> listarEnderecosdoUsuario(@Param( "usuNrId") Long usuNrId, Pageable pageable);
 
